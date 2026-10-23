@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program Referral Sederhana</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        p {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .referral-box {
+            background-color: #f8f9fa;
+            border: 2px dashed #3498db;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none; /* Tersembunyi sampai link dibuat */
+        }
+
+        .referral-url {
+            font-weight: bold;
+            color: #2980b9;
+            word-break: break-all;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3498db;
+        }
+
+        button {
+            width: 100%;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        button.btn-copy {
+            background-color: #3498db;
+            padding: 8px 15px;
+            font-size: 14px;
+            width: auto;
+            margin-top: 5px;
+        }
+
+        button.btn-copy:hover {
+            background-color: #2980b9;
+        }
+
+        .welcome-msg {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #e8f8f5;
+            color: #117864;
+            border-radius: 6px;
+            font-weight: 500;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Undang Teman & Dapatkan Hadiah!</h1>
+        <p>Bagikan link referral unik Anda kepada teman-teman dan dapatkan bonus menarik ketika mereka bergabung.</p>
+
+        <!-- Notifikasi jika masuk lewat link orang lain -->
+        <div id="welcomeMsg" class="welcome-msg"></div>
+
+        <!-- Form untuk membuat link referral -->
+        <div class="input-group">
+            <label for="username">Masukkan Nama / ID Anda:</label>
+            <input type="text" id="username" placeholder="Contoh: budi123" required>
+        </div>
+
+        <button onclick="generateReferral()">Buat Link Referral</button>
+
+        <!-- Kotak hasil link referral -->
+        <div id="referralBox" class="referral-box">
+            <div id="referralUrl" class="referral-url"></div>
+            <button class="btn-copy" onclick="copyLink()">Salin Link</button>
+        </div>
+    </div>
+
+    <script>
+        // 1. Cek apakah pengunjung datang dari link referral orang lain
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const referrer = urlParams.get('ref'); // mengambil parameter ?ref=...
+            
+            if (referrer) {
+                const welcomeMsg = document.getElementById('welcomeMsg');
+                welcomeMsg.innerText = `Kamu diundang oleh: ${referrer} 👋`;
+                welcomeMsg.style.display = 'block';
+            }
+        };
+
+        // 2. Fungsi untuk membuat link referral sendiri
+        function generateReferral() {
+            const usernameInput = document.getElementById('username').value.trim();
+            const referralBox = document.getElementById('referralBox');
+            const referralUrl = document.getElementById('referralUrl');
+
+            if (usernameInput === "") {
+                alert("Silakan masukkan Nama atau ID terlebih dahulu!");
+                return;
+            }
+
+            // Mengambil URL dasar website saat ini
+            const baseCodeUrl = window.location.href.split('?')[0];
+            // Membuat format baru: https://domainanda.com
+            const generatedLink = `${baseCodeUrl}?ref=${encodeURIComponent(usernameInput)}`;
+
+            referralUrl.innerText = generatedLink;
+            referralBox.style.display = 'block';
+        }
+
+        // 3. Fungsi untuk menyalin link ke clipboard
+        function copyLink() {
+            const linkText = document.getElementById('referralUrl').innerText;
+
+            navigator.clipboard.writeText(linkText).then(() => {
+                alert("Link referral berhasil disalin!");
+            }).catch(err => {
+                alert("Gagal menyalin link, silakan salin manual.");
+            });
+        }
+    </script>
+
+</body>
+</html>
